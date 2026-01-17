@@ -12,50 +12,31 @@ Simple context and namespace switchers for kubectl using client-go libraries.
 
 ## Installation
 
-### Using Pre-built Binaries (Recommended)
-
-Download the latest release for your platform:
+### Quick Install (MacOS and Linux)
 
 ```bash
-# Linux (amd64)
-curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-linux-amd64
-curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-linux-amd64
-chmod +x kubectl-ctx-linux-amd64 kubectl-ns-linux-amd64
-sudo mv kubectl-ctx-linux-amd64 /usr/local/bin/kubectl-ctx
-sudo mv kubectl-ns-linux-amd64 /usr/local/bin/kubectl-ns
-
-# Linux (arm64)
-curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-linux-arm64
-curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-linux-arm64
-chmod +x kubectl-ctx-linux-arm64 kubectl-ns-linux-arm64
-sudo mv kubectl-ctx-linux-arm64 /usr/local/bin/kubectl-ctx
-sudo mv kubectl-ns-linux-arm64 /usr/local/bin/kubectl-ns
-
-# macOS (Intel)
-curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-darwin-amd64
-curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-darwin-amd64
-chmod +x kubectl-ctx-darwin-amd64 kubectl-ns-darwin-amd64
-sudo mv kubectl-ctx-darwin-amd64 /usr/local/bin/kubectl-ctx
-sudo mv kubectl-ns-darwin-amd64 /usr/local/bin/kubectl-ns
-
-# macOS (Apple Silicon)
-curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-darwin-arm64
-curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-darwin-arm64
-chmod +x kubectl-ctx-darwin-arm64 kubectl-ns-darwin-arm64
-sudo mv kubectl-ctx-darwin-arm64 /usr/local/bin/kubectl-ctx
-sudo mv kubectl-ns-darwin-arm64 /usr/local/bin/kubectl-ns
+# Automatically detect platform and install latest version
+VERSION=$(curl -s https://api.github.com/repos/camaeel/kubectl-ctx/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+curl -L "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ctx-${OS}-${ARCH}" -o kubectl-ctx
+curl -L "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ns-${OS}-${ARCH}" -o kubectl-ns
+chmod +x kubectl-ctx kubectl-ns
+sudo mv kubectl-ctx kubectl-ns /usr/local/bin/
+```
 
 # Windows (PowerShell)
-curl.exe -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-windows-amd64.exe
-curl.exe -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-windows-amd64.exe
+$VERSION = (Invoke-RestMethod -Uri "https://api.github.com/repos/camaeel/kubectl-ctx/releases/latest").tag_name
+Invoke-WebRequest -Uri "https://github.com/camaeel/kubectl-ctx/releases/download/$VERSION/kubectl-ctx-windows-amd64.exe" -OutFile "kubectl-ctx.exe"
+Invoke-WebRequest -Uri "https://github.com/camaeel/kubectl-ctx/releases/download/$VERSION/kubectl-ns-windows-amd64.exe" -OutFile "kubectl-ns.exe"
 # Move to a directory in your PATH
 ```
 
 ### Verify Installation
 
 ```bash
-kubectl-ctx --version
-kubectl-ns --version
+kubectl ctx --version
+kubectl ns --version
 ```
 
 ### Building from Source
