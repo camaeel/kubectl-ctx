@@ -26,10 +26,7 @@ The tool automatically handles multiple KUBECONFIG files (e.g., KUBECONFIG=file1
   kubectl-ctx
 
   # Switch to a specific context
-  kubectl-ctx my-context
-
-  # Switch to previous context (not yet implemented)
-  kubectl-ctx -`,
+  kubectl-ctx my-context`,
 	Args:          cobra.MaximumNArgs(1),
 	SilenceUsage:  true,
 	SilenceErrors: true,
@@ -80,11 +77,6 @@ func runSwitch(cmd *cobra.Command, args []string) error {
 	// If argument provided, use it; otherwise show interactive selection
 	if len(args) > 0 {
 		targetContext = args[0]
-
-		// Special case: "-" means switch to previous context
-		if targetContext == "-" {
-			return fmt.Errorf("previous context switching not yet implemented")
-		}
 
 		// Check if context exists
 		if _, exists := rawConfig.Contexts[targetContext]; !exists {

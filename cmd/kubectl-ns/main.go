@@ -30,10 +30,7 @@ The tool automatically handles multiple KUBECONFIG files (e.g., KUBECONFIG=file1
   kubectl-ns
 
   # Switch to a specific namespace
-  kubectl-ns kube-system
-
-  # Switch to previous namespace (not yet implemented)
-  kubectl-ns -`,
+  kubectl-ns kube-system`,
 	Args:          cobra.MaximumNArgs(1),
 	SilenceUsage:  true,
 	SilenceErrors: true,
@@ -87,11 +84,6 @@ func runSwitch(cmd *cobra.Command, args []string) error {
 	// If argument provided, use it; otherwise show interactive selection
 	if len(args) > 0 {
 		targetNamespace = args[0]
-
-		// Special case: "-" means switch to previous namespace
-		if targetNamespace == "-" {
-			return fmt.Errorf("previous namespace switching not yet implemented")
-		}
 	} else {
 		// Show current namespace
 		slog.Info("Current namespace", "namespace", currentNamespace)
