@@ -85,7 +85,7 @@ VERIFY=$(KUBECONFIG="$TEST_DIR/config1.yaml:$TEST_DIR/config2.yaml" kubectl conf
 echo "   kubectl shows: $VERIFY"
 echo
 
-if [ "$VERIFY" = "cluster2-context" ]; then
+if [[ "$VERIFY" = "cluster2-context" ]]; then
     echo "✅ SUCCESS: Multiple KUBECONFIG support works!"
 else
     echo "❌ FAILED: Expected cluster2-context but got $VERIFY"
