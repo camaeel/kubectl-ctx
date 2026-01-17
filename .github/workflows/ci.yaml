@@ -39,14 +39,6 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v7
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
- 
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage.out
-          flags: unittests
-        continue-on-error: true
 
   lint:
     name: Lint
