@@ -11,6 +11,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	// Version is set by build flags
+	Version = "dev"
+)
+
 var rootCmd = &cobra.Command{
 	Use:   "kubectl-ns [NAMESPACE]",
 	Short: "Switch between Kubernetes namespaces",
@@ -30,6 +35,10 @@ The tool automatically handles multiple KUBECONFIG files (e.g., KUBECONFIG=file1
 	SilenceUsage:  true,
 	SilenceErrors: true,
 	RunE:          runSwitch,
+}
+
+func init() {
+	rootCmd.Version = Version
 }
 
 func main() {

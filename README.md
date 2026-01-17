@@ -12,6 +12,54 @@ Simple context and namespace switchers for kubectl using client-go libraries.
 
 ## Installation
 
+### Using Pre-built Binaries (Recommended)
+
+Download the latest release for your platform:
+
+```bash
+# Linux (amd64)
+curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-linux-amd64
+curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-linux-amd64
+chmod +x kubectl-ctx-linux-amd64 kubectl-ns-linux-amd64
+sudo mv kubectl-ctx-linux-amd64 /usr/local/bin/kubectl-ctx
+sudo mv kubectl-ns-linux-amd64 /usr/local/bin/kubectl-ns
+
+# Linux (arm64)
+curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-linux-arm64
+curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-linux-arm64
+chmod +x kubectl-ctx-linux-arm64 kubectl-ns-linux-arm64
+sudo mv kubectl-ctx-linux-arm64 /usr/local/bin/kubectl-ctx
+sudo mv kubectl-ns-linux-arm64 /usr/local/bin/kubectl-ns
+
+# macOS (Intel)
+curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-darwin-amd64
+curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-darwin-amd64
+chmod +x kubectl-ctx-darwin-amd64 kubectl-ns-darwin-amd64
+sudo mv kubectl-ctx-darwin-amd64 /usr/local/bin/kubectl-ctx
+sudo mv kubectl-ns-darwin-amd64 /usr/local/bin/kubectl-ns
+
+# macOS (Apple Silicon)
+curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-darwin-arm64
+curl -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-darwin-arm64
+chmod +x kubectl-ctx-darwin-arm64 kubectl-ns-darwin-arm64
+sudo mv kubectl-ctx-darwin-arm64 /usr/local/bin/kubectl-ctx
+sudo mv kubectl-ns-darwin-arm64 /usr/local/bin/kubectl-ns
+
+# Windows (PowerShell)
+curl.exe -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ctx-windows-amd64.exe
+curl.exe -LO https://github.com/camaeel/kubectl-ctx/releases/latest/download/kubectl-ns-windows-amd64.exe
+# Move to a directory in your PATH
+```
+
+### Verify Installation
+
+```bash
+kubectl-ctx --version
+kubectl-ns --version
+```
+
+### Building from Source
+
 ```bash
 # Build both tools
 go build -o kubectl-ctx ./cmd/kubectl-ctx
@@ -27,13 +75,13 @@ cp kubectl-ctx kubectl-ns /usr/local/bin/
 
 ```bash
 # Show current context
-kubectl-ctx
+kubectl ctx
 
 # Switch to a specific context
-kubectl-ctx my-context
+kubectl ctx my-context
 
 # Interactive mode (shows numbered list)
-kubectl-ctx
+kubectl ctx
 # Then select from the list
 ```
 
@@ -41,13 +89,13 @@ kubectl-ctx
 
 ```bash
 # Show current namespace
-kubectl-ns
+kubectl ns
 
 # Switch to a specific namespace
-kubectl-ns my-namespace
+kubectl ns my-namespace
 
 # Interactive mode (prompts for input)
-kubectl-ns
+kubectl ns
 # Then enter namespace name
 ```
 
@@ -64,7 +112,7 @@ Works seamlessly with multiple config files:
 
 ```bash
 export KUBECONFIG=~/.kube/config:~/.kube/config-prod:~/.kube/config-dev
-kubectl-ctx  # Shows contexts from all files merged
+kubectl ctx  # Shows contexts from all files merged
 ```
 
 The tools automatically:
@@ -75,15 +123,7 @@ The tools automatically:
 ## Differences from Original kubectx/kubens
 
 - Uses client-go instead of custom YAML parsing
-- Simpler interactive mode (no fzf dependency yet)
-- Larger binary size (~15MB vs ~5MB) due to client-go
+- Simpler interactive mode (no fzf dependency)
 - Only supports switching (no rename/delete operations)
-- Guaranteed compatibility with kubectl behavior
+- Guaranteed compatibility with kubectl behavior (support for multiple KUBECONFIG files)
 
-## Future Enhancements
-
-- [ ] Add previous context/namespace switching (`-` flag)
-- [ ] Integrate fzf for better interactive experience
-- [ ] Query actual namespaces from cluster for kubectl-ns
-- [ ] Add shell completion
-- [ ] Add context aliasing
