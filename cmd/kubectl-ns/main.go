@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/camaeel/kubectl-ctx/internal/utils/logging"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
@@ -14,8 +16,10 @@ import (
 const defaultNamespace = "default"
 
 func main() {
+	logging.SetupCLILogger()
+
 	if err := run(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		slog.Error(err.Error())
 		os.Exit(1)
 	}
 }
@@ -65,7 +69,7 @@ func run() error {
 		namespaces, err := getNamespacesFromCluster(kubeConfig)
 		if err != nil {
 			// If we can't connect to cluster, allow manual input
-			fmt.Fprintf(os.Stderr, "\nCurrent namespace: %s\n", currentNamespace)
+			slog.Warn("Could not fetch namespaces from cluster, falling back to manual input", "error", err)
 			prompt := &survey.Input{
 				Message: "Enter namespace name:",
 				Default: currentNamespace,
@@ -87,8 +91,9 @@ func run() error {
 	}
 
 	// Don't switch if already on target namespace
+	slog.Info("Already on namespace", "namespace", targetNamespace)
 	if targetNamespace == currentNamespace {
-		fmt.Fprintf(os.Stderr, "Already on namespace %q\n", targetNamespace)
+		slog.Warn("already on namespace", "namespace", targetNamespace)
 		return nil
 	}
 
@@ -101,7 +106,7 @@ func run() error {
 		return fmt.Errorf("failed to switch namespace: %w", err)
 	}
 
-	fmt.Fprintf(os.Stderr, "Switched to namespace %q in context %q\n", targetNamespace, currentContext)
+	slog.Info("Switched to namespace", "namespace", targetNamespace, "context", currentContext)
 	return nil
 }
 

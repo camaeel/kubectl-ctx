@@ -2,16 +2,20 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"sort"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/camaeel/kubectl-ctx/internal/utils/logging"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
 func main() {
+	logging.SetupCLILogger()
+
 	if err := run(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		slog.Error(err.Error())
 		os.Exit(1)
 	}
 }
@@ -61,9 +65,9 @@ func run() error {
 	} else {
 		// No argument: show current context
 		if currentContext == "" {
-			fmt.Println("No current context set")
+			slog.Warn("No current context set")
 		} else {
-			fmt.Println(currentContext)
+			slog.Info("Current context", "context", currentContext)
 		}
 
 		// Interactive selection with survey
@@ -79,7 +83,7 @@ func run() error {
 
 	// Don't switch if already on target context
 	if targetContext == currentContext {
-		fmt.Fprintf(os.Stderr, "Already on context %q\n", targetContext)
+		slog.Info("Already on context", "context", targetContext)
 		return nil
 	}
 
@@ -92,6 +96,6 @@ func run() error {
 		return fmt.Errorf("failed to switch context: %w", err)
 	}
 
-	fmt.Fprintf(os.Stderr, "Switched to context %q\n", targetContext)
+	slog.Info("Switched to context", "context", targetContext)
 	return nil
 }
