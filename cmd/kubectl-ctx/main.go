@@ -38,12 +38,12 @@ func main() {
 	rootCmd.Flags().SetInterspersed(true)
 
 	if err := rootCmd.Execute(); err != nil {
-		slog.Error("Error occured:", "error", err)
+		slog.Error("Error occurred:", "error", err)
 		os.Exit(1)
 	}
 }
 
-func runSwitch(cmd *cobra.Command, args []string) error {
+func runSwitch(_ *cobra.Command, args []string) error {
 	// Create context manager
 	manager, err := context.NewManager()
 	if err != nil {
