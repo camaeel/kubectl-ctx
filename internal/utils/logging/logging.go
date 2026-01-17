@@ -8,6 +8,12 @@ import (
 	"os"
 )
 
+const (
+	colorRed    = "\033[31m"
+	colorOrange = "\033[33m"
+	colorReset  = "\033[0m"
+)
+
 // cliHandler is a custom slog handler for clean CLI output
 type cliHandler struct {
 	w io.Writer
@@ -18,6 +24,14 @@ func (h *cliHandler) Enabled(ctx context.Context, level slog.Level) bool {
 }
 
 func (h *cliHandler) Handle(ctx context.Context, r slog.Record) error {
+	// Apply colors based on log level
+	switch {
+	case r.Level >= slog.LevelError:
+		fmt.Fprint(h.w, colorRed)
+	case r.Level >= slog.LevelWarn:
+		fmt.Fprint(h.w, colorOrange)
+	}
+
 	// Print message without "msg=" prefix
 	fmt.Fprint(h.w, r.Message)
 
@@ -26,6 +40,11 @@ func (h *cliHandler) Handle(ctx context.Context, r slog.Record) error {
 		fmt.Fprintf(h.w, " %s=%v", a.Key, a.Value.Any())
 		return true
 	})
+
+	// Reset color
+	if r.Level >= slog.LevelWarn {
+		fmt.Fprint(h.w, colorReset)
+	}
 
 	fmt.Fprintln(h.w)
 	return nil
