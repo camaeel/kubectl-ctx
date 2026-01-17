@@ -226,7 +226,7 @@ func TestListNamespacesFromCluster(t *testing.T) {
 	// Attempt to list namespaces from cluster
 	// This will fail without a real cluster connection, which is expected
 	namespaces, err := mgr.ListNamespacesFromCluster()
-	
+
 	// We expect an error since there's no real cluster
 	// But verify the function returns appropriate error types
 	if err != nil {
@@ -238,4 +238,3 @@ func TestListNamespacesFromCluster(t *testing.T) {
 		assert.NotNil(t, namespaces)
 	}
 }
-
