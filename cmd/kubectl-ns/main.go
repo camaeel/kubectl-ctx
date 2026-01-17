@@ -91,25 +91,17 @@ func runSwitch(cmd *cobra.Command, args []string) error {
 		// Try to get namespaces from cluster
 		namespaces, err := getNamespacesFromCluster(kubeConfig)
 		if err != nil {
-			// If we can't connect to cluster, allow manual input
-			slog.Warn("Could not fetch namespaces from cluster, falling back to manual input", "error", err)
-			prompt := &survey.Input{
-				Message: "Enter namespace name:",
-				Default: currentNamespace,
-			}
-			if err := survey.AskOne(prompt, &targetNamespace); err != nil {
-				return err
-			}
-		} else {
-			// Show interactive selection with actual namespaces
-			prompt := &survey.Select{
-				Message: "Select namespace:",
-				Options: namespaces,
-				Default: currentNamespace,
-			}
-			if err := survey.AskOne(prompt, &targetNamespace); err != nil {
-				return err
-			}
+			return fmt.Errorf("failed to fetch namespaces from cluster: %w", err)
+		}
+
+		// Show interactive selection with actual namespaces
+		prompt := &survey.Select{
+			Message: "Select namespace:",
+			Options: namespaces,
+			Default: currentNamespace,
+		}
+		if err := survey.AskOne(prompt, &targetNamespace); err != nil {
+			return err
 		}
 	}
 
