@@ -94,17 +94,16 @@ jobs:
         command:
           - kubectl-ctx
           - kubectl-ns
-        include:
-          - goos: linux
-            goarch: amd64
-          - goos: linux
-            goarch: arm64
-          - goos: darwin
-            goarch: amd64
-          - goos: darwin
-            goarch: arm64
+        goos:
+          - linux
+          - darwin
+          - windows
+        goarch:
+          - amd64
+          - arm64
+        exclude:
           - goos: windows
-            goarch: amd64
+            goarch: arm64
     steps:
       - uses: actions/checkout@v6
 
