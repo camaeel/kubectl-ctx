@@ -44,7 +44,7 @@ func main() {
 	rootCmd.Flags().SetInterspersed(true)
 
 	if err := rootCmd.Execute(); err != nil {
-		slog.Error("Error", "error", err)
+		slog.Error("Error occured:", "error", err)
 		os.Exit(1)
 	}
 }
