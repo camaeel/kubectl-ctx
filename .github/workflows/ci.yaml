@@ -246,10 +246,10 @@ jobs:
               os = OS.mac? ? "darwin" : "linux"
               arch = Hardware::CPU.arm? ? "arm64" : "amd64"
               suffix = "#{os}-#{arch}"
-              
+
               # Install kubectl-ctx (main binary from URL)
               bin.install "kubectl-ctx-#{suffix}" => "kubectl-ctx"
-              
+
               # Install kubectl-ns (from resource)
               resource("kubectl-ns-#{suffix}").stage do
                 bin.install "kubectl-ns-#{suffix}" => "kubectl-ns"
