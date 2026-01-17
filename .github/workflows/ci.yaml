@@ -284,7 +284,7 @@ jobs:
             --head "$BRANCH" \
             --title "Update kubectl-ctx and kubectl-ns to ${{ steps.release.outputs.version }}" \
             --body "Automated update from kubectl-ctx release ${{ steps.release.outputs.version }}" \
-            --label "pr-pull"
+
           
           # Enable auto-merge when checks pass
           gh pr merge "$BRANCH" \
