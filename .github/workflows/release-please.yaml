@@ -17,4 +17,4 @@ jobs:
         id: release
         with:
           release-type: go
-          package-name: kubectl-ctx
+          token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
