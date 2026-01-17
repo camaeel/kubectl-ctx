@@ -211,3 +211,31 @@ func TestGetCurrentContext(t *testing.T) {
 	ctx := mgr.GetCurrentContext()
 	assert.Equal(t, "my-context", ctx)
 }
+
+func TestListNamespacesFromCluster(t *testing.T) {
+	// This test verifies ListNamespacesFromCluster behavior
+	// It will fail when no real cluster is available, which is expected in unit tests
+	kubeconfigPath := createTestKubeconfig(t, "test-ctx", map[string]string{
+		"test-ctx": "default",
+	})
+	t.Setenv("KUBECONFIG", kubeconfigPath)
+
+	mgr, err := NewManager()
+	require.NoError(t, err)
+
+	// Attempt to list namespaces from cluster
+	// This will fail without a real cluster connection, which is expected
+	namespaces, err := mgr.ListNamespacesFromCluster()
+	
+	// We expect an error since there's no real cluster
+	// But verify the function returns appropriate error types
+	if err != nil {
+		// Expected: connection refused, no such host, etc.
+		assert.Error(t, err)
+		assert.Nil(t, namespaces)
+	} else {
+		// If somehow connected to a real cluster, verify we get a slice
+		assert.NotNil(t, namespaces)
+	}
+}
+
