@@ -1,20 +1,15 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log/slog"
 	"os"
 
 	"github.com/AlecAivazis/survey/v2"
+	ns "github.com/camaeel/kubectl-ctx/internal/namespace"
 	"github.com/camaeel/kubectl-ctx/internal/utils/logging"
 	"github.com/spf13/cobra"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
 )
-
-const defaultNamespace = "default"
 
 var rootCmd = &cobra.Command{
 	Use:   "kubectl-ns [NAMESPACE]",
@@ -50,34 +45,15 @@ func main() {
 }
 
 func runSwitch(cmd *cobra.Command, args []string) error {
-	// Load kubeconfig
-	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-	configOverrides := &clientcmd.ConfigOverrides{}
-
-	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
-
-	// Get raw config
-	rawConfig, err := kubeConfig.RawConfig()
+	// Create namespace manager
+	manager, err := ns.NewManager()
 	if err != nil {
-		return fmt.Errorf("failed to load kubeconfig: %w", err)
-	}
-
-	// Get current context
-	currentContext := rawConfig.CurrentContext
-	if currentContext == "" {
-		return fmt.Errorf("no current context set")
-	}
-
-	context, exists := rawConfig.Contexts[currentContext]
-	if !exists {
-		return fmt.Errorf("current context %q not found in config", currentContext)
+		return err
 	}
 
 	// Get current namespace
-	currentNamespace := context.Namespace
-	if currentNamespace == "" {
-		currentNamespace = defaultNamespace
-	}
+	currentNamespace := manager.GetCurrentNamespace()
+	currentContext := manager.GetCurrentContext()
 
 	var targetNamespace string
 
@@ -89,7 +65,7 @@ func runSwitch(cmd *cobra.Command, args []string) error {
 		slog.Info("Current namespace", "namespace", currentNamespace)
 
 		// Try to get namespaces from cluster
-		namespaces, err := getNamespacesFromCluster(kubeConfig)
+		namespaces, err := manager.ListNamespacesFromCluster()
 		if err != nil {
 			return fmt.Errorf("failed to fetch namespaces from cluster: %w", err)
 		}
@@ -106,47 +82,16 @@ func runSwitch(cmd *cobra.Command, args []string) error {
 	}
 
 	// Don't switch if already on target namespace
-	slog.Info("Already on namespace", "namespace", targetNamespace)
 	if targetNamespace == currentNamespace {
 		slog.Info("Already on namespace", "namespace", targetNamespace)
 		return nil
 	}
 
-	// Update namespace in the current context
-	context.Namespace = targetNamespace
-	rawConfig.Contexts[currentContext] = context
-
-	// Write back the configuration
-	if err := clientcmd.ModifyConfig(loadingRules, rawConfig, false); err != nil {
-		return fmt.Errorf("failed to switch namespace: %w", err)
+	// Switch namespace
+	if err := manager.SwitchNamespace(targetNamespace); err != nil {
+		return err
 	}
 
 	slog.Info("Switched to namespace", "namespace", targetNamespace, "context", currentContext)
 	return nil
-}
-
-// getNamespacesFromCluster attempts to fetch namespaces from the cluster
-func getNamespacesFromCluster(config clientcmd.ClientConfig) ([]string, error) {
-	restConfig, err := config.ClientConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	clientset, err := kubernetes.NewForConfig(restConfig)
-	if err != nil {
-		return nil, err
-	}
-
-	ctx := context.Background()
-	namespaceList, err := clientset.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
-	if err != nil {
-		return nil, err
-	}
-
-	namespaces := make([]string, 0, len(namespaceList.Items))
-	for _, ns := range namespaceList.Items {
-		namespaces = append(namespaces, ns.Name)
-	}
-
-	return namespaces, nil
 }
