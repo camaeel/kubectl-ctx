@@ -157,7 +157,7 @@ jobs:
       - name: Generate checksums
         run: |
           cd artifacts
-          sha256sum * > SHA256SUMS
+          sha256sum ./* > SHA256SUMS
           cd ..
 
       - name: Upload to existing release
