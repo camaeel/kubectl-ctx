@@ -183,3 +183,39 @@ func TestRunSwitch_ListContexts(t *testing.T) {
 	contexts := mgr.ListContexts()
 	assert.ElementsMatch(t, []string{"ctx1", "ctx2", "ctx3"}, contexts)
 }
+
+func TestRunSwitch_MultipleKubeconfigFiles(t *testing.T) {
+	// Create two kubeconfig files
+	kubeconfig1 := testutil.CreateKubeconfig(t, "ctx1", map[string]string{
+		"ctx1": "",
+		"ctx2": "",
+	})
+
+	kubeconfig2 := testutil.CreateKubeconfig(t, "ctx3", map[string]string{
+		"ctx3": "",
+		"ctx4": "",
+	})
+
+	// Set KUBECONFIG with multiple files (colon-separated on Unix)
+	t.Setenv("KUBECONFIG", kubeconfig1+":"+kubeconfig2)
+
+	// Verify we can list contexts from both files
+	mgr, err := ctx.NewManager()
+	require.NoError(t, err)
+
+	contexts := mgr.ListContexts()
+	assert.ElementsMatch(t, []string{"ctx1", "ctx2", "ctx3", "ctx4"}, contexts)
+
+	// Verify current context from first file
+	assert.Equal(t, "ctx1", mgr.GetCurrentContext())
+
+	// Switch to context from second file
+	cmd := &cobra.Command{}
+	err = runSwitch(cmd, []string{"ctx3"})
+	require.NoError(t, err)
+
+	// Verify the switch
+	mgr, err = ctx.NewManager()
+	require.NoError(t, err)
+	assert.Equal(t, "ctx3", mgr.GetCurrentContext())
+}

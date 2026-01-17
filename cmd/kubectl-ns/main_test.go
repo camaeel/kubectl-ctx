@@ -137,3 +137,34 @@ func TestRunSwitch_MultipleNamespaceSwitches(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "ns1", mgr.GetCurrentNamespace())
 }
+
+func TestRunSwitch_MultipleKubeconfigFiles(t *testing.T) {
+	// Create two kubeconfig files
+	kubeconfig1 := testutil.CreateKubeconfig(t, "ctx1", map[string]string{
+		"ctx1": "ns1",
+	})
+
+	kubeconfig2 := testutil.CreateKubeconfig(t, "ctx2", map[string]string{
+		"ctx2": "ns2",
+	})
+
+	// Set KUBECONFIG with multiple files (colon-separated on Unix)
+	t.Setenv("KUBECONFIG", kubeconfig1+":"+kubeconfig2)
+
+	// Verify current context from first file
+	mgr, err := ns.NewManager()
+	require.NoError(t, err)
+	assert.Equal(t, "ctx1", mgr.GetCurrentContext())
+	assert.Equal(t, "ns1", mgr.GetCurrentNamespace())
+
+	// Switch namespace in the current context
+	cmd := &cobra.Command{}
+	err = runSwitch(cmd, []string{"new-ns"})
+	require.NoError(t, err)
+
+	// Verify the switch
+	mgr, err = ns.NewManager()
+	require.NoError(t, err)
+	assert.Equal(t, "new-ns", mgr.GetCurrentNamespace())
+	assert.Equal(t, "ctx1", mgr.GetCurrentContext())
+}
