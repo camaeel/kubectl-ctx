@@ -205,9 +205,19 @@ jobs:
               if Hardware::CPU.arm?
                 url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ctx-darwin-arm64"
                 sha256 "${{ steps.checksums.outputs.ctx_darwin_arm64 }}"
+
+                resource "kubectl-ns" do
+                  url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ns-darwin-arm64"
+                  sha256 "${{ steps.checksums.outputs.ns_darwin_arm64 }}"
+                end
               else
                 url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ctx-darwin-amd64"
                 sha256 "${{ steps.checksums.outputs.ctx_darwin_amd64 }}"
+
+                resource "kubectl-ns" do
+                  url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ns-darwin-amd64"
+                  sha256 "${{ steps.checksums.outputs.ns_darwin_amd64 }}"
+                end
               end
             end
 
@@ -215,43 +225,30 @@ jobs:
               if Hardware::CPU.arm?
                 url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ctx-linux-arm64"
                 sha256 "${{ steps.checksums.outputs.ctx_linux_arm64 }}"
+
+                resource "kubectl-ns" do
+                  url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ns-linux-arm64"
+                  sha256 "${{ steps.checksums.outputs.ns_linux_arm64 }}"
+                end
               else
                 url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ctx-linux-amd64"
                 sha256 "${{ steps.checksums.outputs.ctx_linux_amd64 }}"
+
+                resource "kubectl-ns" do
+                  url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ns-linux-amd64"
+                  sha256 "${{ steps.checksums.outputs.ns_linux_amd64 }}"
+                end
               end
             end
 
-            resource "kubectl-ns-darwin-arm64" do
-              url "https://github.com/camaeel/kubectl-ctx/releases/download/v${{ steps.release.outputs.version_number }}/kubectl-ns-darwin-arm64"
-              sha256 "${{ steps.checksums.outputs.ns_darwin_arm64 }}"
-            end
-
-            resource "kubectl-ns-darwin-amd64" do
-              url "https://github.com/camaeel/kubectl-ctx/releases/download/v${{ steps.release.outputs.version_number }}/kubectl-ns-darwin-amd64"
-              sha256 "${{ steps.checksums.outputs.ns_darwin_amd64 }}"
-            end
-
-            resource "kubectl-ns-linux-arm64" do
-              url "https://github.com/camaeel/kubectl-ctx/releases/download/v${{ steps.release.outputs.version_number }}/kubectl-ns-linux-arm64"
-              sha256 "${{ steps.checksums.outputs.ns_linux_arm64 }}"
-            end
-
-            resource "kubectl-ns-linux-amd64" do
-              url "https://github.com/camaeel/kubectl-ctx/releases/download/v${{ steps.release.outputs.version_number }}/kubectl-ns-linux-amd64"
-              sha256 "${{ steps.checksums.outputs.ns_linux_amd64 }}"
-            end
-
             def install
-              # Determine platform suffix
               os = OS.mac? ? "darwin" : "linux"
               arch = Hardware::CPU.arm? ? "arm64" : "amd64"
               suffix = "#{os}-#{arch}"
 
-              # Install kubectl-ctx (main binary from URL)
               bin.install "kubectl-ctx-#{suffix}" => "kubectl-ctx"
 
-              # Install kubectl-ns (from resource)
-              resource("kubectl-ns-#{suffix}").stage do
+              resource("kubectl-ns").stage do
                 bin.install "kubectl-ns-#{suffix}" => "kubectl-ns"
               end
             end
