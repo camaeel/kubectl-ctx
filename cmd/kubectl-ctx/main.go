@@ -8,19 +8,47 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/camaeel/kubectl-ctx/internal/utils/logging"
+	"github.com/spf13/cobra"
 	"k8s.io/client-go/tools/clientcmd"
 )
+
+var rootCmd = &cobra.Command{
+	Use:   "kubectl-ctx [CONTEXT_NAME]",
+	Short: "Switch between Kubernetes contexts",
+	Long: `kubectl-ctx is a tool for switching between Kubernetes contexts.
+
+With no arguments, it shows the current context and provides an interactive
+menu to select a new context. With a context name argument, it switches
+directly to that context.
+
+The tool automatically handles multiple KUBECONFIG files (e.g., KUBECONFIG=file1:file2).`,
+	Example: `  # Show current context and select interactively
+  kubectl-ctx
+
+  # Switch to a specific context
+  kubectl-ctx my-context
+
+  # Switch to previous context (not yet implemented)
+  kubectl-ctx -`,
+	Args:          cobra.MaximumNArgs(1),
+	SilenceUsage:  true,
+	SilenceErrors: true,
+	RunE:          runSwitch,
+}
 
 func main() {
 	logging.SetupCLILogger()
 
-	if err := run(); err != nil {
-		slog.Error(err.Error())
+	// Ensure help flags are parsed before positional args
+	rootCmd.Flags().SetInterspersed(true)
+
+	if err := rootCmd.Execute(); err != nil {
+		slog.Error("Error", "error", err)
 		os.Exit(1)
 	}
 }
 
-func run() error {
+func runSwitch(cmd *cobra.Command, args []string) error {
 	// Load kubeconfig using client-go (handles multiple KUBECONFIG files automatically)
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	configOverrides := &clientcmd.ConfigOverrides{}
@@ -50,8 +78,8 @@ func run() error {
 	var targetContext string
 
 	// If argument provided, use it; otherwise show interactive selection
-	if len(os.Args) > 1 {
-		targetContext = os.Args[1]
+	if len(args) > 0 {
+		targetContext = args[0]
 
 		// Special case: "-" means switch to previous context
 		if targetContext == "-" {

@@ -8,6 +8,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/camaeel/kubectl-ctx/internal/utils/logging"
+	"github.com/spf13/cobra"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
@@ -15,16 +16,43 @@ import (
 
 const defaultNamespace = "default"
 
+var rootCmd = &cobra.Command{
+	Use:   "kubectl-ns [NAMESPACE]",
+	Short: "Switch between Kubernetes namespaces",
+	Long: `kubectl-ns is a tool for switching namespaces in the current Kubernetes context.
+
+With no arguments, it shows the current namespace and provides an interactive
+menu to select a new namespace (fetched from the cluster if accessible).
+With a namespace argument, it switches directly to that namespace.
+
+The tool automatically handles multiple KUBECONFIG files (e.g., KUBECONFIG=file1:file2).`,
+	Example: `  # Show current namespace and select interactively
+  kubectl-ns
+
+  # Switch to a specific namespace
+  kubectl-ns kube-system
+
+  # Switch to previous namespace (not yet implemented)
+  kubectl-ns -`,
+	Args:          cobra.MaximumNArgs(1),
+	SilenceUsage:  true,
+	SilenceErrors: true,
+	RunE:          runSwitch,
+}
+
 func main() {
 	logging.SetupCLILogger()
 
-	if err := run(); err != nil {
-		slog.Error(err.Error())
+	// Ensure help flags are parsed before positional args
+	rootCmd.Flags().SetInterspersed(true)
+
+	if err := rootCmd.Execute(); err != nil {
+		slog.Error("Error", "error", err)
 		os.Exit(1)
 	}
 }
 
-func run() error {
+func runSwitch(cmd *cobra.Command, args []string) error {
 	// Load kubeconfig
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	configOverrides := &clientcmd.ConfigOverrides{}
@@ -57,14 +85,17 @@ func run() error {
 	var targetNamespace string
 
 	// If argument provided, use it; otherwise show interactive selection
-	if len(os.Args) > 1 {
-		targetNamespace = os.Args[1]
+	if len(args) > 0 {
+		targetNamespace = args[0]
 
 		// Special case: "-" means switch to previous namespace
 		if targetNamespace == "-" {
 			return fmt.Errorf("previous namespace switching not yet implemented")
 		}
 	} else {
+		// Show current namespace
+		slog.Info("Current namespace", "namespace", currentNamespace)
+
 		// Try to get namespaces from cluster
 		namespaces, err := getNamespacesFromCluster(kubeConfig)
 		if err != nil {
@@ -93,7 +124,7 @@ func run() error {
 	// Don't switch if already on target namespace
 	slog.Info("Already on namespace", "namespace", targetNamespace)
 	if targetNamespace == currentNamespace {
-		slog.Warn("already on namespace", "namespace", targetNamespace)
+		slog.Info("Already on namespace", "namespace", targetNamespace)
 		return nil
 	}
 
