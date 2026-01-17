@@ -121,7 +121,7 @@ jobs:
           if [ "$GOOS" = "windows" ]; then
             EXT=".exe"
           fi
-          go build -v -ldflags="-s -w" -o "bin/kubectl-ctx-${GOOS}-${GOARCH}${EXT}" ./cmd/kubectl-ctx
+          go build -v -ldflags="-s -w -X main.Version=${{ github.ref_name }}" -o "bin/kubectl-ctx-${GOOS}-${GOARCH}${EXT}" ./cmd/kubectl-ctx
 
       - name: Build kubectl-ns
         env:
@@ -132,7 +132,7 @@ jobs:
           if [ "$GOOS" = "windows" ]; then
             EXT=".exe"
           fi
-          go build -v -ldflags="-s -w" -o "bin/kubectl-ns-${GOOS}-${GOARCH}${EXT}" ./cmd/kubectl-ns
+          go build -v -ldflags="-s -w -X main.Version=${{ github.ref_name }}" -o "bin/kubectl-ns-${GOOS}-${GOARCH}${EXT}" ./cmd/kubectl-ns
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
