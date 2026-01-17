@@ -91,6 +91,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        command:
+          - kubectl-ctx
+          - kubectl-ns
         include:
           - goos: linux
             goarch: amd64
@@ -111,7 +114,7 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: Build kubectl-ctx
+      - name: Build ${{ matrix.command }}
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
@@ -121,18 +124,7 @@ jobs:
           if [ "$GOOS" = "windows" ]; then
             EXT=".exe"
           fi
-          go build -v -ldflags="-s -w -X main.Version=${{ github.ref_name }}" -o "bin/kubectl-ctx-${GOOS}-${GOARCH}${EXT}" ./cmd/kubectl-ctx
-
-      - name: Build kubectl-ns
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-        run: |
-          EXT=""
-          if [ "$GOOS" = "windows" ]; then
-            EXT=".exe"
-          fi
-          go build -v -ldflags="-s -w -X main.Version=${{ github.ref_name }}" -o "bin/kubectl-ns-${GOOS}-${GOARCH}${EXT}" ./cmd/kubectl-ns
+          go build -v -ldflags="-s -w -X main.Version=${{ github.ref_name }}" -o "bin/${{ matrix.command }}-${GOOS}-${GOARCH}${EXT}" ./cmd/${{ matrix.command }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
