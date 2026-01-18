@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"slices"
 
 	"github.com/AlecAivazis/survey/v2"
 	ns "github.com/camaeel/kubectl-ctx/internal/namespace"
@@ -77,6 +78,11 @@ func runSwitch(_ *cobra.Command, args []string) error {
 		namespaces, err := manager.ListNamespacesFromCluster()
 		if err != nil {
 			return fmt.Errorf("failed to fetch namespaces from cluster: %w", err)
+		}
+
+		if !slices.Contains(namespaces, currentNamespace) {
+			// current namespace not in the list, use default as fallback
+			currentNamespace = "default"
 		}
 
 		// Show interactive selection with actual namespaces
