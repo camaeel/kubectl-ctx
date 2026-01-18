@@ -14,6 +14,13 @@ Simple context and namespace switchers for kubectl using client-go libraries.
 
 ### Quick Install (MacOS and Linux)
 
+#### Install with Homebrew
+
+```bash
+brew install camaeel/tap/kubectl-ctx
+```
+
+#### Manual download
 ```bash
 # Automatically detect platform and install latest version
 VERSION=$(curl -s https://api.github.com/repos/camaeel/kubectl-ctx/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
@@ -25,7 +32,7 @@ chmod +x kubectl-ctx kubectl-ns
 sudo mv kubectl-ctx kubectl-ns /usr/local/bin/
 ```
 
-# Windows (PowerShell)
+### Windows (PowerShell)
 $VERSION = (Invoke-RestMethod -Uri "https://api.github.com/repos/camaeel/kubectl-ctx/releases/latest").tag_name
 Invoke-WebRequest -Uri "https://github.com/camaeel/kubectl-ctx/releases/download/$VERSION/kubectl-ctx-windows-amd64.exe" -OutFile "kubectl-ctx.exe"
 Invoke-WebRequest -Uri "https://github.com/camaeel/kubectl-ctx/releases/download/$VERSION/kubectl-ns-windows-amd64.exe" -OutFile "kubectl-ns.exe"
