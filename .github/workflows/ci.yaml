@@ -282,10 +282,10 @@ jobs:
             --base master \
             --head "$BRANCH" \
             --title "Update kubectl-ctx and kubectl-ns to ${{ github.ref_name }}" \
-            --body "Automated update from kubectl-ctx release ${{ github.ref_name }}" \
+            --body "Automated update from kubectl-ctx release ${{ github.ref_name }}"
           
-          # Enable auto-merge when checks pass
+          # Enable auto-merge when checks pass (ignore errors if no required checks are configured)
           gh pr merge "$BRANCH" \
             --repo camaeel/homebrew-tap \
             --auto \
-            --squash
+            --squash || echo "Auto-merge not enabled (may require branch protection rules with required checks)"
