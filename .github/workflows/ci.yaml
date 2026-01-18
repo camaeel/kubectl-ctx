@@ -165,7 +165,7 @@ jobs:
       - name: Download release assets and calculate checksums
         id: checksums
         run: |
-          VERSION="${{ steps.release.outputs.version }}"
+          VERSION="${{ github.ref_name }}"
           
           # Download SHA256SUMS file from release
           curl -L "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/SHA256SUMS" -o SHA256SUMS
@@ -194,28 +194,30 @@ jobs:
 
       - name: Update kubectl-ctx formula
         run: |
-          cat > homebrew-tap/Formula/kubectl-ctx.rb << 'EOF'
+          VERSION="${{ github.ref_name }}"
+          VERSION_NUMBER="${VERSION#v}"
+          cat > homebrew-tap/Formula/kubectl-ctx.rb << EOF
           class KubectlCtx < Formula
             desc "Kubernetes context and namespace switchers using client-go libraries"
             homepage "https://github.com/camaeel/kubectl-ctx"
-            version "${{ steps.release.outputs.version_number }}"
+            version "${VERSION_NUMBER}"
             license "Apache-2.0"
 
             on_macos do
               if Hardware::CPU.arm?
-                url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ctx-darwin-arm64"
+                url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ctx-darwin-arm64"
                 sha256 "${{ steps.checksums.outputs.ctx_darwin_arm64 }}"
 
                 resource "kubectl-ns" do
-                  url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ns-darwin-arm64"
+                  url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ns-darwin-arm64"
                   sha256 "${{ steps.checksums.outputs.ns_darwin_arm64 }}"
                 end
               else
-                url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ctx-darwin-amd64"
+                url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ctx-darwin-amd64"
                 sha256 "${{ steps.checksums.outputs.ctx_darwin_amd64 }}"
 
                 resource "kubectl-ns" do
-                  url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ns-darwin-amd64"
+                  url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ns-darwin-amd64"
                   sha256 "${{ steps.checksums.outputs.ns_darwin_amd64 }}"
                 end
               end
@@ -223,19 +225,19 @@ jobs:
 
             on_linux do
               if Hardware::CPU.arm?
-                url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ctx-linux-arm64"
+                url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ctx-linux-arm64"
                 sha256 "${{ steps.checksums.outputs.ctx_linux_arm64 }}"
 
                 resource "kubectl-ns" do
-                  url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ns-linux-arm64"
-                  sha256 "${{ steps.checksums.outputs.ns_linux_arm64 }}"
+                  url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ns-linux-arm64"
+                  sha256 "${{ steps.checksums.outputs.ns_darwin_arm64 }}"
                 end
               else
-                url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ctx-linux-amd64"
+                url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ctx-linux-amd64"
                 sha256 "${{ steps.checksums.outputs.ctx_linux_amd64 }}"
 
                 resource "kubectl-ns" do
-                  url "https://github.com/camaeel/kubectl-ctx/releases/download/v#{version}/kubectl-ns-linux-amd64"
+                  url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ns-linux-amd64"
                   sha256 "${{ steps.checksums.outputs.ns_linux_amd64 }}"
                 end
               end
@@ -244,18 +246,18 @@ jobs:
             def install
               os = OS.mac? ? "darwin" : "linux"
               arch = Hardware::CPU.arm? ? "arm64" : "amd64"
-              suffix = "#{os}-#{arch}"
+              suffix = "\#{os}-\#{arch}"
 
-              bin.install "kubectl-ctx-#{suffix}" => "kubectl-ctx"
+              bin.install "kubectl-ctx-\#{suffix}" => "kubectl-ctx"
 
               resource("kubectl-ns").stage do
-                bin.install "kubectl-ns-#{suffix}" => "kubectl-ns"
+                bin.install "kubectl-ns-\#{suffix}" => "kubectl-ns"
               end
             end
 
             test do
-              assert_match version.to_s, shell_output("#{bin}/kubectl-ctx --version")
-              assert_match version.to_s, shell_output("#{bin}/kubectl-ns --version")
+              assert_match version.to_s, shell_output("\#{bin}/kubectl-ctx --version")
+              assert_match version.to_s, shell_output("\#{bin}/kubectl-ns --version")
             end
           end
           EOF
@@ -268,10 +270,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          BRANCH="update-kubectl-ctx-${{ steps.release.outputs.version }}"
+          BRANCH="update-kubectl-ctx-${{ github.ref_name }}"
           git checkout -b "$BRANCH"
           git add Formula/
-          git commit -m "Update kubectl-ctx and kubectl-ns to ${{ steps.release.outputs.version }}"
+          git commit -m "Update kubectl-ctx and kubectl-ns to ${{ github.ref_name }}"
           git push origin "$BRANCH"
           
           # Create PR and enable auto-merge
@@ -279,9 +281,8 @@ jobs:
             --repo camaeel/homebrew-tap \
             --base master \
             --head "$BRANCH" \
-            --title "Update kubectl-ctx and kubectl-ns to ${{ steps.release.outputs.version }}" \
-            --body "Automated update from kubectl-ctx release ${{ steps.release.outputs.version }}" \
-
+            --title "Update kubectl-ctx and kubectl-ns to ${{ github.ref_name }}" \
+            --body "Automated update from kubectl-ctx release ${{ github.ref_name }}" \
           
           # Enable auto-merge when checks pass
           gh pr merge "$BRANCH" \
