@@ -278,14 +278,18 @@ jobs:
           
           # Create PR and enable auto-merge
           gh pr create \
-            --repo camaeel/homebrew-tap \
+            --repo ${{ github.repository_owner }}/homebrew-tap \
             --base master \
             --head "$BRANCH" \
             --title "Update kubectl-ctx and kubectl-ns to ${{ github.ref_name }}" \
-            --body "Automated update from kubectl-ctx release ${{ github.ref_name }}"
+            --body "Automated update from kubectl-ctx release ${{ github.ref_name }}" \
+            --assignee ${{ github.repository_owner }}
           
           # Enable auto-merge when checks pass (ignore errors if no required checks are configured)
           gh pr merge "$BRANCH" \
-            --repo camaeel/homebrew-tap \
+            --repo ${{ github.repository_owner }}/homebrew-tap \
             --auto \
-            --squash || echo "Auto-merge not enabled (may require branch protection rules with required checks)"
+            --squash || \
+          gh pr edit "$BRANCH" \
+            --repo ${{ github.repository_owner }}/homebrew-tap \
+            --add-assignee ${{ github.repository_owner }}
