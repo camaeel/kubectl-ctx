@@ -246,18 +246,18 @@ jobs:
             def install
               os = OS.mac? ? "darwin" : "linux"
               arch = Hardware::CPU.arm? ? "arm64" : "amd64"
-              suffix = "\#{os}-\#{arch}"
+              suffix = "#{os}-#{arch}"
 
-              bin.install "kubectl-ctx-\#{suffix}" => "kubectl-ctx"
+              bin.install "kubectl-ctx-#{suffix}" => "kubectl-ctx"
 
               resource("kubectl-ns").stage do
-                bin.install "kubectl-ns-\#{suffix}" => "kubectl-ns"
+                bin.install "kubectl-ns-#{suffix}" => "kubectl-ns"
               end
             end
 
             test do
-              assert_match version.to_s, shell_output("\#{bin}/kubectl-ctx --version")
-              assert_match version.to_s, shell_output("\#{bin}/kubectl-ns --version")
+              assert_match version.to_s, shell_output("#{bin}/kubectl-ctx --version")
+              assert_match version.to_s, shell_output("#{bin}/kubectl-ns --version")
             end
           end
           EOF
