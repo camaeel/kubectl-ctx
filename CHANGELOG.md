@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/camaeel/kubectl-ctx/compare/v0.1.0...v0.1.1) (2026-01-18)
+
+
+### Bug Fixes
+
+* currentNamespace not in the cluste namespaces list ([aaca41b](https://github.com/camaeel/kubectl-ctx/commit/aaca41b6e9d29982bab9a9be5491194be20eb393))
+* homebrew tap ([9846c03](https://github.com/camaeel/kubectl-ctx/commit/9846c03756a1b259234cdda009c51388a6a62d2e))
+
 ## 0.1.0 (2026-01-17)
 
 
