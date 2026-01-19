@@ -162,13 +162,13 @@ jobs:
           echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
           echo "version_number=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Download release assets and calculate checksums
+      - name: Download checksums
         id: checksums
         run: |
           VERSION="${{ github.ref_name }}"
           
           # Download SHA256SUMS file from release
-          curl -L "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/SHA256SUMS" -o SHA256SUMS
+          curl --tlsv1.2 -sSf -L "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/SHA256SUMS" -o SHA256SUMS
           
           # Extract checksums for each binary
           echo "ctx_darwin_amd64=$(grep 'kubectl-ctx-darwin-amd64$' SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
