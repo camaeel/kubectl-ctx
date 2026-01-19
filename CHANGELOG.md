@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/camaeel/kubectl-ctx/compare/v0.1.1...v0.1.2) (2026-01-19)
+
+
+### Bug Fixes
+
+* conflict ([0d05110](https://github.com/camaeel/kubectl-ctx/commit/0d051109c64671ccc2102b28dd62d15cd5cb790e))
+
 ## [0.1.1](https://github.com/camaeel/kubectl-ctx/compare/v0.1.0...v0.1.1) (2026-01-18)
 
 
