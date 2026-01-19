@@ -162,24 +162,26 @@ jobs:
           echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
           echo "version_number=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
+      - name: Download artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+          merge-multiple: true
+
       - name: Download checksums
         id: checksums
         run: |
-          VERSION="${{ github.ref_name }}"
-          
-          # Download SHA256SUMS file from release
-          curl --tlsv1.2 -sSf -L "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/SHA256SUMS" -o SHA256SUMS
           
           # Extract checksums for each binary
-          echo "ctx_darwin_amd64=$(grep 'kubectl-ctx-darwin-amd64$' SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
-          echo "ctx_darwin_arm64=$(grep 'kubectl-ctx-darwin-arm64$' SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
-          echo "ctx_linux_amd64=$(grep 'kubectl-ctx-linux-amd64$' SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
-          echo "ctx_linux_arm64=$(grep 'kubectl-ctx-linux-arm64$' SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "ctx_darwin_amd64=$(grep 'kubectl-ctx-darwin-amd64$' artifacts/SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "ctx_darwin_arm64=$(grep 'kubectl-ctx-darwin-arm64$' artifacts/SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "ctx_linux_amd64=$(grep 'kubectl-ctx-linux-amd64$' artifacts/SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "ctx_linux_arm64=$(grep 'kubectl-ctx-linux-arm64$' artifacts/SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
           
-          echo "ns_darwin_amd64=$(grep 'kubectl-ns-darwin-amd64$' SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
-          echo "ns_darwin_arm64=$(grep 'kubectl-ns-darwin-arm64$' SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
-          echo "ns_linux_amd64=$(grep 'kubectl-ns-linux-amd64$' SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
-          echo "ns_linux_arm64=$(grep 'kubectl-ns-linux-arm64$' SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "ns_darwin_amd64=$(grep 'kubectl-ns-darwin-amd64$' artifacts/SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "ns_darwin_arm64=$(grep 'kubectl-ns-darwin-arm64$' artifacts/SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "ns_linux_amd64=$(grep 'kubectl-ns-linux-amd64$' artifacts/SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "ns_linux_arm64=$(grep 'kubectl-ns-linux-arm64$' artifacts/SHA256SUMS | awk '{print $1}')" >> $GITHUB_OUTPUT
 
       - name: Checkout homebrew-tap
         uses: actions/checkout@v6
