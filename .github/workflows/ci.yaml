@@ -232,7 +232,7 @@ jobs:
 
                 resource "kubectl-ns" do
                   url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ns-linux-arm64"
-                  sha256 "${{ steps.checksums.outputs.ns_darwin_arm64 }}"
+                  sha256 "${{ steps.checksums.outputs.ns_linux_arm64 }}"
                 end
               else
                 url "https://github.com/camaeel/kubectl-ctx/releases/download/${VERSION}/kubectl-ctx-linux-amd64"
