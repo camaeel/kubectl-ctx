@@ -143,6 +143,12 @@ jobs:
           sha256sum ./* > SHA256SUMS
           cd ..
 
+      - name: Upload checksums as artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: checksums
+          path: artifacts/SHA256SUMS
+
       - name: Upload to existing release
         uses: softprops/action-gh-release@v2
         with:
