@@ -118,7 +118,7 @@ jobs:
           go build -v -ldflags="-s -w -X main.Version=${{ github.ref_name }}" -o "bin/${{ matrix.command }}-${GOOS}-${GOARCH}${EXT}" ./cmd/${{ matrix.command }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: binaries-${{ matrix.command }}-${{ matrix.goos }}-${{ matrix.goarch }}
           path: bin/*
@@ -132,7 +132,7 @@ jobs:
       contents: write
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
           merge-multiple: true
@@ -144,7 +144,7 @@ jobs:
           cd ..
 
       - name: Upload checksums as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: checksums
           path: artifacts/SHA256SUMS
@@ -169,7 +169,7 @@ jobs:
           echo "version_number=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
       - name: Download artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
           merge-multiple: true
