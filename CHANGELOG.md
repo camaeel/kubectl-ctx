@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/camaeel/kubectl-ctx/compare/v0.1.6...v0.1.7) (2026-02-27)
+
+
+### Bug Fixes
+
+* **deps:** update kubernetes packages to v0.35.2 ([#12](https://github.com/camaeel/kubectl-ctx/issues/12)) ([be09f1d](https://github.com/camaeel/kubectl-ctx/commit/be09f1d68aab41c747850080fb3b438bd8cfd863))
+
 ## [0.1.4](https://github.com/camaeel/kubectl-ctx/compare/v0.1.3...v0.1.4) (2026-02-11)
 
 
