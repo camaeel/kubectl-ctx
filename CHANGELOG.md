@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/camaeel/kubectl-ctx/compare/v0.1.8...v0.1.9) (2026-04-23)
+
+
+### Bug Fixes
+
+* **deps:** update kubernetes monorepo to v0.36.0 ([#17](https://github.com/camaeel/kubectl-ctx/issues/17)) ([2802aa7](https://github.com/camaeel/kubectl-ctx/commit/2802aa70e120afecdac838bff75bd26b4b941817))
+
 ## [0.1.8](https://github.com/camaeel/kubectl-ctx/compare/v0.1.7...v0.1.8) (2026-04-17)
 
 
