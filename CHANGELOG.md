@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.9](https://github.com/camaeel/kubectl-ctx/compare/v0.1.8...v0.1.9) (2026-05-21)
+
+
+### Bug Fixes
+
+* **deps:** update kubernetes monorepo to v0.36.0 ([#17](https://github.com/camaeel/kubectl-ctx/issues/17)) ([2802aa7](https://github.com/camaeel/kubectl-ctx/commit/2802aa70e120afecdac838bff75bd26b4b941817))
+* **deps:** update module k8s.io/apimachinery to v0.36.1 ([#21](https://github.com/camaeel/kubectl-ctx/issues/21)) ([8f38450](https://github.com/camaeel/kubectl-ctx/commit/8f38450b43cf23d69e901713859debcc81e44109))
+* **deps:** update module k8s.io/client-go to v0.36.1 ([#22](https://github.com/camaeel/kubectl-ctx/issues/22)) ([28cec9a](https://github.com/camaeel/kubectl-ctx/commit/28cec9abf60e3b2978d7d17688419fbce20f8e82))
+
 ## [0.1.8](https://github.com/camaeel/kubectl-ctx/compare/v0.1.7...v0.1.8) (2026-04-17)
 
 
