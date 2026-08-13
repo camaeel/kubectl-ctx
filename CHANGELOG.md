@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.11](https://github.com/camaeel/kubectl-ctx/compare/v0.1.10...v0.1.11) (2026-08-13)
+
+
+### Bug Fixes
+
+* **deps:** update kubernetes monorepo to v0.36.3 ([#26](https://github.com/camaeel/kubectl-ctx/issues/26)) ([fc58036](https://github.com/camaeel/kubectl-ctx/commit/fc58036fb54148ef4a2367a2317211f05a355fd7))
+* go mod tidy ([fc254a3](https://github.com/camaeel/kubectl-ctx/commit/fc254a33a4019a247d8bf05d85e0787f2b5019d3))
+
 ## [0.1.10](https://github.com/camaeel/kubectl-ctx/compare/v0.1.9...v0.1.10) (2026-06-25)
 
 
