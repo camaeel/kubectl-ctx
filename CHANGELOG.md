@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.14](https://github.com/camaeel/kubectl-ctx/compare/v0.1.13...v0.1.14) (2026-10-21)
+
+
+### Bug Fixes
+
+* bump goalng & deps ([b140d50](https://github.com/camaeel/kubectl-ctx/commit/b140d50c01cae9591b695e936459831af0dbad9f))
+
 ## [0.1.13](https://github.com/camaeel/kubectl-ctx/compare/v0.1.12...v0.1.13) (2026-10-17)
 
 
