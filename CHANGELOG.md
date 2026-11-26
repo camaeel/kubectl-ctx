@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.16](https://github.com/camaeel/kubectl-ctx/compare/v0.1.15...v0.1.16) (2026-11-26)
+
+
+### Bug Fixes
+
+* bump golang.org/x/net ([7fe9e1f](https://github.com/camaeel/kubectl-ctx/commit/7fe9e1f1491597979bb3b234725fbf16b4bd7889))
+* bump k8s packages ([939505d](https://github.com/camaeel/kubectl-ctx/commit/939505d5b87a35560b3f45f034d0f283a1ee87b8))
+
 ## [0.1.15](https://github.com/camaeel/kubectl-ctx/compare/v0.1.14...v0.1.15) (2026-11-11)
 
 
